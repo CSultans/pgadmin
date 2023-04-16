@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  pgdb:
+    image: postgres:15.2-alpine
+    container_name: pgdb
+    environment:
+      - POSTGRES_DB=django_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - djangoNetwork
+  pgdbadmin:
+    user: 0:0 # run all the commad inside container as a root user
+    container_name: pgdbadmin
+    image: dpage/pgadmin4:7.0
+    environment:
+      PGADMIN_DEFAULT_EMAIL: someemail@test.com
+      PGADMIN_DEFAULT_PASSWORD: somepassword
+    volumes:
+      - ./config/pgadmin/servers.json:/tmp/servers.json
+    ports:
+      - "5051:80"
+    depends_on:
+      - pgdb
+    networks:
+      - djangoNetwork
+    # load the connections from the servers.json
+    command: /bin/sh -c "python /pgadmin4/setup.py --load-servers /tmp/servers.json"
+networks:
+  djangoNetwork:
+    name: djangoNetwork
+    driver: bridge
+
+
