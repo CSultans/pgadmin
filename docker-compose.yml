@@ -11,26 +11,26 @@ services:
     volumes:
       - ./data/db:/var/lib/postgresql/data
     ports:
-      - "5433:5432"
+      - "5434:5432"
     networks:
       - djangoNetwork
   pgdbadmin:
-    user: 0:0 # run all the commad inside container as a root user
+    # user: 0:0 # run all the commad inside container as a root user
     container_name: pgdbadmin
     image: dpage/pgadmin4:7.0
     environment:
-      PGADMIN_DEFAULT_EMAIL: someemail@test.com
+      PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
       PGADMIN_DEFAULT_PASSWORD: somepassword
     volumes:
       - ./config/pgadmin/servers.json:/tmp/servers.json
     ports:
-      - "5051:80"
+      - "5055:80"
     depends_on:
       - pgdb
     networks:
       - djangoNetwork
     # load the connections from the servers.json
-    command: /bin/sh -c "python /pgadmin4/setup.py --load-servers /tmp/servers.json"
+    # command: /bin/sh -c "python /pgadmin4/setup.py --load-servers /tmp/servers.json"
 networks:
   djangoNetwork:
     name: djangoNetwork
